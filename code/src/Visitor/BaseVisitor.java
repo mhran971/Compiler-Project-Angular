@@ -1,32 +1,47 @@
 package Visitor;
 import AST.*;
+import SymbolTable.Row;
+import SymbolTable.SymbolTable;
 import antlr.AngularParser;
 import antlr.AngularParserBaseVisitor;
+
+
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class BaseVisitor extends AngularParserBaseVisitor {
+
+    SymbolTable symbolTable = new SymbolTable();
     @Override
     public Program visitProgram(AngularParser.ProgramContext ctx) {
         Program program=new Program();
         if (ctx.sourceElements() != null){
             program.setSourceElements((SourceElements) visit(ctx.sourceElements()));
         }
-
         return program;
     }
 
     @Override
     public SourceElements visitSourceElements(AngularParser.SourceElementsContext ctx) {
-        SourceElements sourceElements=new SourceElements();
-        for(int i=0;i<ctx.statement().size();i++){
-            if(ctx.statement(i)!=null){
+        SourceElements sourceElements = new SourceElements();
+
+        for (int i = 0; i < ctx.statement().size(); i++) {
+            if (ctx.statement(i) != null) {
                 sourceElements.getStatement().add((Statement) visit(ctx.statement(i)));
             }
         }
+
+
+        Row row = new Row();
+        row.setType("SourceElements");
+        row.setValue(sourceElements.getStatement().toString());
+        symbolTable.getRows().add(row);
+
+
         return sourceElements;
     }
+
 
     @Override
     public ImportStatement visitImportStatement(AngularParser.ImportStatementContext ctx) {
