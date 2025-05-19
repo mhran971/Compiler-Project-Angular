@@ -1,7 +1,19 @@
-package SymmboleTable;
+package SymbolTable;
 
-public class Raw {
+public class Row {
     String type;
+    String value;
+
+
+    public Row(String type, String value) {
+        this.type = type;
+        this.value = value;
+    }
+
+    public Row() {
+
+    }
+
 
     public String getType() {
         return type;
@@ -18,7 +30,5 @@ public class Raw {
     public void setValue(String value) {
         this.value = value;
     }
-
-    String value;
 }
 
