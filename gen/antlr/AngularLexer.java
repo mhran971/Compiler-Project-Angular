@@ -1,14 +1,17 @@
-// Generated from E:/Fourth year/Semester2(2024-2025)/Compiler 2/ProjectCompiler2/code/src/antlr/AngularLexer.g4 by ANTLR 4.13.2
+// Generated from C:/Users/MAHRAN/Downloads/Telegram Desktop/ProjectCompiler2/code/src/antlr/AngularLexer.g4 by ANTLR 4.13.1
 package antlr;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
+import org.antlr.v4.runtime.misc.*;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast", "CheckReturnValue", "this-escape"})
 public class AngularLexer extends Lexer {
-	static { RuntimeMetaData.checkVersion("4.13.2", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.13.1", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
