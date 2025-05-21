@@ -9,7 +9,7 @@ import antlr.AngularParser;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-//import SymbolTable.*;
+import SymbolTable.*;
 import java.io.IOException;
 import static org.antlr.v4.runtime.CharStreams.fromFileName;
 public class Main {
@@ -23,8 +23,8 @@ public class Main {
         ParseTree tree = parser.program();
         BaseVisitor visitor=new  BaseVisitor();
         Program prog=(Program) visitor.visit(tree);
-       // SymbolTable table=visitor.getSymbolTable();
-        System.out.println("Abstract parse tree(AST)"+"\n"+prog);
+        SymbolTable table=visitor.getSymbolTable();
+//        System.out.println("Abstract parse tree(AST)"+"\n"+prog);
 
     }
 
