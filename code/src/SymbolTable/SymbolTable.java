@@ -1,31 +1,58 @@
 package SymbolTable;
 
-
-
-
-import SymbolTable.Row;
-
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Stack;
 
 public class SymbolTable {
-    List<Row> rows = new ArrayList<>();
 
-    public List<Row> getRows() {
-        return rows;
+    private Stack<List<Row>> scopes;
+
+    public SymbolTable() {
+        scopes = new Stack<>();
+        // global scope
+        scopes.push(new ArrayList<>());
     }
 
-    public void setRows(List<Row> rows) {
-        this.rows = rows;
+
+    public void enterScope() {
+        scopes.push(new ArrayList<>());
     }
 
-    public void print(){
-        for (int i = 0 ;i < rows.size(); i++){
-            if(rows.get(i)!=null)
-            {
-                System.out.println(rows.get(i).getType() + "\t\t\t\t" + rows.get(i).getValue());
+
+    public void exitScope() {
+        if (!scopes.isEmpty()) {
+            scopes.pop();
+        }
+    }
+
+
+    public void addRow(Row row) {
+        if (!scopes.isEmpty()) {
+            scopes.peek().add(row);
+        }
+    }
+
+
+    public List<Row> getAllRows() {
+        List<Row> allRows = new ArrayList<>();
+        for (List<Row> scope : scopes) {
+            allRows.addAll(scope);
+        }
+        return allRows;
+    }
+
+    public void print() {
+        int level = 0;
+        for (List<Row> scope : scopes) {
+            System.out.println("Scope Level " + level + ":");
+            for (Row row : scope) {
+                if (row != null) {
+                    System.out.println("\t" + row.getType() + "\t\t\t\t" + row.getValue());
+                }
             }
+            level++;
+            System.out.println();
         }
     }
 }
