@@ -46,13 +46,16 @@ public class SymbolTable {
         int level = 0;
         for (List<Row> scope : scopes) {
             System.out.println("Scope Level " + level + ":");
+            System.out.printf("%-20s | %-50s%n", "Type", "Value");
+            System.out.println("---------------------+--------------------------------------------------");
             for (Row row : scope) {
                 if (row != null) {
-                    System.out.println("\t" + row.getType() + "\t\t\t\t" + row.getValue());
+                    System.out.printf("%-20s | %-50s%n", row.getType(), row.getValue());
                 }
             }
             level++;
             System.out.println();
         }
     }
+
 }
