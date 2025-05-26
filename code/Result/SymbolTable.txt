@@ -1,0 +1,66 @@
+Scope: global-program:
+Scope: Interface Scope:
+  Symbol → Name:Product  , Type: interface  , Value: InterfaceAttributes
+  Symbol → Name:id       , Type: string     , Value: N/A                
+  Symbol → Name:name     , Type: string     , Value: N/A                
+  Symbol → Name:image    , Type: string     , Value: N/A                
+  Symbol → Name:details  , Type: string     , Value: N/A                
+Scope: Interface Scope:
+  Symbol → Name:Item  , Type: interface  , Value: InterfaceAttributes
+  Symbol → Name:id    , Type: number     , Value: N/A                
+Scope: Component Scope:
+  Symbol → Name:Component    , Type: Component      , Value: ComponentOptions:          
+  Symbol → Name:imports      , Type: ReservedWord:  , Value: [RouterOutlet,CommonModule]
+  Symbol → Name:templateUrl  , Type: stringLiteral  , Value: './app.component.html'     
+  Symbol → Name:styleUrls    , Type: stringLiteral  , Value: styleUrls                  
+Scope: Export Scope:
+  Symbol → Name:AppComponent  , Type: class    , Value: ClassBody:
+  Symbol → Name:products      , Type: Product  , Value: Products: 
+Scope: Product:
+  Symbol → Name:id       , Type: string  , Value: 'Product one'                                                                   
+  Symbol → Name:name     , Type: string  , Value: <missing StringLiteral>                                                         
+  Symbol → Name:image    , Type: string  , Value: 'assets/food products.png'                                                      
+  Symbol → Name:details  , Type: string  , Value: 'لدينا أفضل النتجات الغذائية و بأفضل الاسعار من أفضل الماركات العالمية والمحلية'
+Scope: Product:
+  Symbol → Name:id       , Type: string  , Value: 'Product two'                                              
+  Symbol → Name:name     , Type: string  , Value: 'منتجات تجميلية'                                           
+  Symbol → Name:image    , Type: string  , Value: 'assets/cosmetic products.png'                             
+  Symbol → Name:details  , Type: string  , Value: 'أفضل أنواع العطورات والمنتجات التجميلية رائحة ونعومة معاً'
+Scope: Product:
+  Symbol → Name:id       , Type: string  , Value: 'Product three'                               
+  Symbol → Name:name     , Type: string  , Value: 'بيتزا الكوخ'                                 
+  Symbol → Name:image    , Type: string  , Value: 'assets/pizza.png'                            
+  Symbol → Name:details  , Type: string  , Value: 'بيتزا خضار مع الدجاج جميع الاحجام وحسب الطلب'
+Scope: Product:
+  Symbol → Name:id       , Type: string  , Value: 'Product four'              
+  Symbol → Name:name     , Type: string  , Value: 'سلطة خضار'                 
+  Symbol → Name:image    , Type: string  , Value: 'assets/salad.png'          
+  Symbol → Name:details  , Type: string  , Value: 'سلطات خضار مع الزيت البلدي'
+Scope: Product:
+  Symbol → Name:id       , Type: string  , Value: <missing StringLiteral>                                                      
+  Symbol → Name:name     , Type: string  , Value: 'سندويش'                                                                     
+  Symbol → Name:image    , Type: string  , Value: 'assets/sandwich.png'                                                        
+  Symbol → Name:details  , Type: string  , Value: 'لدينا كل أنواع السندويش غربي وشرقي وجاهزون لكافة الطلبات أهلا بكم في مطعمكم'
+Scope: Product:
+  Symbol → Name:id       , Type: string  , Value: 'Product Six'                 
+  Symbol → Name:name     , Type: string  , Value: 'حساء'                        
+  Symbol → Name:image    , Type: string  , Value: 'assets/soup.png'             
+  Symbol → Name:details  , Type: string  , Value: 'حساء بجميع أنواعه وحسب الطلب'
+Scope: Method Scope:
+  Symbol → Name:selectProduct  , Type: Function  , Value: product:Product
+Scope: Method Scope:
+  Symbol → Name:selectProduct  , Type: Function  , Value: N/A  
+Scope: HTML div:
+  Symbol → Name:div   , Type: class  , Value: 'container'
+Scope: HTML div:
+  Symbol → Name:div    , Type: class  , Value: 'main-product'         
+  Symbol → Name:src    , Type: N/A    , Value: 'selectedProduct.image'
+  Symbol → Name:alt    , Type: N/A    , Value: 'صورة المنتج'          
+  Symbol → Name:class  , Type: N/A    , Value: 'product-image'        
+Scope: HTML div:
+  Symbol → Name:div   , Type: class  , Value: 'side-products'
+Scope: div Img:
+  Symbol → Name:Img    , Type: div   , Value: N/A            
+  Symbol → Name:src    , Type: N/A   , Value: 'product.image'
+  Symbol → Name:alt    , Type: N/A   , Value: 'صورة المنتج'  
+  Symbol → Name:class  , Type: N/A   , Value: 'product-image'

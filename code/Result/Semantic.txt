@@ -1,0 +1,5 @@
+Semantic Check : 
+❌Component is missing selector at line 21
+❌ Type error: cannot assign non-string value to string variable 'name' at line 31
+❌ Type error: cannot assign non-string value to string variable 'id' at line 54
+❌selectProduct duplicate in this scope in line 73
