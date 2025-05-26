@@ -1,24 +1,25 @@
 package Visitor;
 import AST.*;
+import SemanticError.FunctionDuplicate;
 import SymbolTable.Scope.BaseScope;
 import SymbolTable.Scope.GlobalScope;
 import SymbolTable.Scope.LocalScope;
-import SymbolTable.Symbol.Symbol;
 import SymbolTable.Symbol.SymbolBase;
 import SymbolTable.SymbolTable;
 import antlr.AngularParser;
 import antlr.AngularParserBaseVisitor;
 import app.SemanticCheck;
-import org.antlr.v4.runtime.ParserRuleContext;
-
 import java.util.*;
+import static SemanticError.BindingChecker.checkBinding;
+import static SemanticError.CheckStringAssignment.checkStringAssignment;
+
+
 
 public class BaseVisitor extends AngularParserBaseVisitor {
     SymbolTable symbolTable;
     SymbolBase symbolBase;
     private final Stack<GlobalScope> globalStack;
     private final Stack<LocalScope> localStack;
-    private final Map<String, Integer> functionNameToFirstLine = new HashMap<>();
     public SymbolTable getSymbolTable() {
         return symbolTable;
     }
@@ -28,124 +29,6 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         this.globalStack = new Stack<>();
         this.localStack = new Stack<>();
     }
-
-    public void isFunctionDuplicate(String functionName, ParserRuleContext ctx) {
-        GlobalScope currentScope = globalStack.peek();
-        int currentLine = ctx.getStart().getLine();
-        if (currentScope.symbols.containsKey(functionName)) {
-            if (!functionNameToFirstLine.containsKey(functionName)) {
-                functionNameToFirstLine.put(functionName, currentLine);
-            } else {
-                String errorMsg = "❌"+functionName + " duplicate in this scope in line " + currentLine;
-                if (!SemanticCheck.Errors.contains(errorMsg)) {
-                    SemanticCheck.Errors.add(errorMsg);
-                }
-            }
-        }
-    }
-
-    public void checkStringAssignment(BaseScope currentScope, ParserRuleContext ctx, String variableName, String assignedValue) {
-        if (currentScope == null) {
-            return;
-        }
-        SymbolBase symbol = (SymbolBase) currentScope.symbols.get(variableName);
-        if (symbol == null) {
-            return;
-        }
-
-        String type = symbol.getType();
-        int currentLine = ctx.getStart().getLine();
-        if ("string".equals(type)) {
-            if (assignedValue == null) {
-                String errorMsg = "❌Type error: variable '" + variableName + "' is string but assigned value is not string at line " + currentLine;
-                if (!SemanticCheck.Errors.contains(errorMsg)) {
-                    SemanticCheck.Errors.add(errorMsg);
-                }
-                return;
-            }
-
-            if (!(assignedValue.startsWith("'") && assignedValue.endsWith("'")) &&
-                    !(assignedValue.startsWith("\"") && assignedValue.endsWith("\""))) {
-                String errorMsg = "❌Type error: cannot assign non-string value to string variable '"
-                        + variableName + "' at line " + currentLine;
-                if (!SemanticCheck.Errors.contains(errorMsg)) {
-                    SemanticCheck.Errors.add(errorMsg);
-                }
-            }
-        }
-    }
-
-    public void checkBinding(String value, ParserRuleContext ctx, SymbolTable symbolTable) {
-        if (value == null) return;
-
-        // إزالة علامات الاقتباس الخارجية إن وجدت
-        value = value.trim();
-        if ((value.startsWith("\"") && value.endsWith("\"")) ||
-                (value.startsWith("'") && value.endsWith("'"))) {
-            value = value.substring(1, value.length() - 1).trim();
-        }
-
-        // تجاهل العبارات التي لا تحتوي نقطة (object.property)
-        if (!value.contains(".")) return;
-
-        // تجاهل العبارات المعقدة مثل: product?.image أو product?.image || 'default'
-        // يمكنك دعمها لاحقًا
-        if (value.contains("?") || value.contains(":") || value.contains("||")) return;
-
-        // تحليل القيمة: product.image
-        String[] parts = value.split("\\.");
-        if (parts.length == 2) {
-            String objectName = parts[0].trim();
-            String propertyName = parts[1].trim();
-
-            if (!symbolTableContainsSymbol(symbolTable, objectName)) {
-                int line = ctx.getStart().getLine();
-                String error = "❌Object '" + objectName + "' is not defined in any scope at line " + line;
-                if (!SemanticCheck.Errors.contains(error)) {
-                    SemanticCheck.Errors.add(error);
-                }
-                return;
-            }
-
-            if (!symbolTableContainsProperty(symbolTable, objectName, propertyName)) {
-                int line = ctx.getStart().getLine();
-                String error = "❌Property '" + propertyName + "' is not defined in object '" + objectName + "' at line " + line;
-                if (!SemanticCheck.Errors.contains(error)) {
-                    SemanticCheck.Errors.add(error);
-                }
-            }
-        }
-    }
-
-
-    // دوال مساعدة للبحث في SymbolTable
-    private boolean symbolTableContainsSymbol(SymbolTable symbolTable, String symbolName) {
-        for (GlobalScope scope : symbolTable.getGlobalScopes()) {
-            if (scope.symbols.containsKey(symbolName)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean symbolTableContainsProperty(SymbolTable symbolTable, String objectName, String propertyName) {
-        for (GlobalScope scope : symbolTable.getGlobalScopes()) {
-            Symbol symbol = scope.symbols.get(objectName);
-            if (symbol != null) {
-                // هنا منطق تحقق وجود الخاصية، يعتمد على كيف تخزن الخاصيات
-                if (scope.symbols.containsKey(propertyName)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-
-
-
-
-
 
     @Override
   public Program visitProgram(AngularParser.ProgramContext ctx) {
@@ -157,7 +40,6 @@ public class BaseVisitor extends AngularParserBaseVisitor {
       if (ctx.sourceElements() != null){
           program.setSourceElements((SourceElements) visit(ctx.sourceElements()));
       }
-       // checkHtmlBindingsFromSymbolTable(this.symbolTable,ctx);
       return program;
   }
 
@@ -243,13 +125,6 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         symbolBase.setType("interface");
         globalScope.symbols.put(ctx.Interface().getText(),symbolBase);
 
-
-    /*    try {
-            scope.define(symbolBase);
-        } catch (IllegalArgumentException e) {
-            System.err.println("Error defining symbol: " + e.getMessage());
-        }*/
-
         InterfaceStatement interfaceStatement = new InterfaceStatement();
         if (ctx.Interface() != null) {
             interfaceStatement.setInterface(ctx.Interface().getText());
@@ -279,27 +154,46 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         return interfaceAttributes;
     }
 
-    @Override
+   /* @Override
     public AttributesProperty visitAttributesProperty(AngularParser.AttributesPropertyContext ctx) {
         Type type=(Type) visit(ctx.type());
         DeclarationName declarationName=(DeclarationName) visit(ctx.declarationName());
         BaseScope scope = !localStack.isEmpty() ? localStack.peek() : globalStack.peek();
-/*        GlobalScope globalScope = new GlobalScope(null);
-        this.globalStack.push(globalScope);
-        this.symbolTable.addGlobalScope(globalScope);
         SymbolBase symbolBase = new SymbolBase();
         symbolBase.setName(declarationName.getSTRING());
         symbolBase.setType(ctx.type().getText());
-        globalScope.symbols.put(ctx.declarationName().getText(),symbolBase);
-        globalScope.symbols.put(ctx.type().getText(),symbolBase);*/
 
-        SymbolBase symbolBase = new SymbolBase();
-        symbolBase.setName(declarationName.getSTRING());
-        symbolBase.setType(ctx.type().getText());
+        try {
+            scope.define(symbolBase);
+        } catch (IllegalArgumentException e) {
+            System.err.println("Error defining symbol: " + e.getMessage());
+        }
         scope.symbols.put(symbolBase.getName(), symbolBase);
-
         return new AttributesProperty(declarationName,type);
     }
+*/
+   @Override
+   public AttributesProperty visitAttributesProperty(AngularParser.AttributesPropertyContext ctx) {
+       Type type = (Type) visit(ctx.type());
+       DeclarationName declarationName = (DeclarationName) visit(ctx.declarationName());
+       BaseScope scope = !localStack.isEmpty() ? localStack.peek() : globalStack.peek();
+
+       SymbolBase symbolBase = new SymbolBase();
+       symbolBase.setName(declarationName.getSTRING());
+       symbolBase.setType(ctx.type().getText());
+       try {
+           scope.define(symbolBase);
+       } catch (IllegalArgumentException e) {
+           int line = ctx.getStart().getLine();
+           String errorMsg = "❌Variable <"+symbolBase.getName()+"> is already declared at line " + line;
+          // String errorMsg = "❌Duplicate symbol '" + symbolBase.getName() + "' at line " + line;
+           if (!SemanticCheck.Errors.contains(errorMsg)) {
+               SemanticCheck.Errors.add(errorMsg);
+           }
+       }
+       scope.symbols.put(symbolBase.getName(), symbolBase);
+       return new AttributesProperty(declarationName, type);
+   }
 
     @Override
     public AttributesProperty visitMethodProperty(AngularParser.MethodPropertyContext ctx) {
@@ -620,7 +514,8 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         }
         methodDeclaration.setMethodBody((MethodBody) visit(ctx.methodBody()));
         if (ctx.declarationName() != null) {
-            isFunctionDuplicate(methodDeclaration.getDeclarationName().getSTRING(), ctx);
+            FunctionDuplicate.isFunctionDuplicate(methodDeclaration.getDeclarationName().getSTRING(), ctx, globalStack);
+
         }
 
         return methodDeclaration;
@@ -775,7 +670,7 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         //symbolBase.setValue(ctx.contentHtml().getText()+" "+ctx.htmlBrace().getText());
         globalScope.symbols.put(symbolBase.getName(),symbolBase);
         HtmlBrace htmlBrace=(HtmlBrace) visit(ctx.htmlBrace());
-        checkStringAssignment(globalStack.peek(), ctx, symbolBase.getName(), symbolBase.getValue());
+        //checkStringAssignment(globalStack.peek(), ctx, symbolBase.getName(), symbolBase.getValue());
         return new HtmlContentBrace(tagName,contentHtml,htmlBrace);
     }
 

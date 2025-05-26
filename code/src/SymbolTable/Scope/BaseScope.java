@@ -120,12 +120,18 @@ public abstract class BaseScope implements Scope {
         return null; // not found
     }
 
+    @Override
     public void define(Symbol sym) throws IllegalArgumentException {
-
+        if (symbols.containsKey(sym.getName())) {
+            throw new IllegalArgumentException("Symbol '" + sym.getName() + "' is already defined.");
+        }
         sym.setScope(this);
-        sym.setInsertionOrderNumber(symbols.size()); // set to insertion position from 0
+        sym.setInsertionOrderNumber(symbols.size());
         symbols.put(sym.getName(), sym);
     }
+
+
+
 
     public Scope getEnclosingScope() {
         return enclosingScope;
