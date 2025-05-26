@@ -19,7 +19,6 @@ interface Item {
 }
 
 @Component({
-  selector: 'app-root',
   imports: [RouterOutlet, CommonModule],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
@@ -29,7 +28,7 @@ export class AppComponent {
   products: Product[] = [
     {
       id:'Product one',
-      name: 'منتجات غذائية',
+      name:,
       image: 'assets/food products.png',
       details: 'لدينا أفضل النتجات الغذائية و بأفضل الاسعار من أفضل الماركات العالمية والمحلية',
     },
@@ -52,14 +51,14 @@ export class AppComponent {
       details: 'سلطات خضار مع الزيت البلدي',
     },
     {
-      id:'Product five',
+      id:,
       name: 'سندويش',
       image: 'assets/sandwich.png',
       details: 'لدينا كل أنواع السندويش غربي وشرقي وجاهزون لكافة الطلبات أهلا بكم في مطعمكم',
     },
     {
       id:'Product Six',
-      name: 'حساء',
+      name:'حساء',
       image: 'assets/soup.png',
       details: 'حساء بجميع أنواعه وحسب الطلب',
     },
@@ -71,6 +70,9 @@ export class AppComponent {
   selectProduct(product: Product) {
     this.selectedProduct = product;
   }
+    selectProduct() {
+
+    }
 }
 
 
@@ -157,5 +159,4 @@ h3, h4 {
 p {
   margin: 0;
 }
-
 
