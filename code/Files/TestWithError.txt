@@ -98,7 +98,7 @@ export class AppComponent {
       *ngFor='let product of products'
       (click)='selectProduct(product)'
     >
-      <h4>{{ product.name }}</h4>
+      <h4>{{ Product.name }}</h4>
       <img [src]='product.image' alt='صورة المنتج' class='product-image' />
     </div>
   </div>

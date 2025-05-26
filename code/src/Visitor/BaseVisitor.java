@@ -3,7 +3,6 @@ import AST.*;
 import SymbolTable.Scope.BaseScope;
 import SymbolTable.Scope.GlobalScope;
 import SymbolTable.Scope.LocalScope;
-import SymbolTable.Scope.Scope;
 import SymbolTable.Symbol.Symbol;
 import SymbolTable.Symbol.SymbolBase;
 import SymbolTable.SymbolTable;
@@ -19,7 +18,6 @@ public class BaseVisitor extends AngularParserBaseVisitor {
     SymbolBase symbolBase;
     private final Stack<GlobalScope> globalStack;
     private final Stack<LocalScope> localStack;
-    //List<SymbolBase> arrayOfSymbol = new ArrayList<>();
     private final Map<String, Integer> functionNameToFirstLine = new HashMap<>();
     public SymbolTable getSymbolTable() {
         return symbolTable;
@@ -45,6 +43,7 @@ public class BaseVisitor extends AngularParserBaseVisitor {
             }
         }
     }
+
     public void checkStringAssignment(BaseScope currentScope, ParserRuleContext ctx, String variableName, String assignedValue) {
         if (currentScope == null) {
             return;
@@ -58,7 +57,7 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         int currentLine = ctx.getStart().getLine();
         if ("string".equals(type)) {
             if (assignedValue == null) {
-                String errorMsg = "❌ Type error: variable '" + variableName + "' is string but assigned value is not string at line " + currentLine;
+                String errorMsg = "❌Type error: variable '" + variableName + "' is string but assigned value is not string at line " + currentLine;
                 if (!SemanticCheck.Errors.contains(errorMsg)) {
                     SemanticCheck.Errors.add(errorMsg);
                 }
@@ -67,7 +66,7 @@ public class BaseVisitor extends AngularParserBaseVisitor {
 
             if (!(assignedValue.startsWith("'") && assignedValue.endsWith("'")) &&
                     !(assignedValue.startsWith("\"") && assignedValue.endsWith("\""))) {
-                String errorMsg = "❌ Type error: cannot assign non-string value to string variable '"
+                String errorMsg = "❌Type error: cannot assign non-string value to string variable '"
                         + variableName + "' at line " + currentLine;
                 if (!SemanticCheck.Errors.contains(errorMsg)) {
                     SemanticCheck.Errors.add(errorMsg);
@@ -77,40 +76,47 @@ public class BaseVisitor extends AngularParserBaseVisitor {
     }
 
     public void checkBinding(String value, ParserRuleContext ctx, SymbolTable symbolTable) {
-        // نفس الكود لكن بدون الحاجة لحلقة فوق كل الـ SymbolTable دفعة واحدة
         if (value == null) return;
 
-        if (value.contains(".") && !value.startsWith("'") && !value.startsWith("\"")
-                && !value.endsWith("'") && !value.endsWith("\"")) {
+        // إزالة علامات الاقتباس الخارجية إن وجدت
+        value = value.trim();
+        if ((value.startsWith("\"") && value.endsWith("\"")) ||
+                (value.startsWith("'") && value.endsWith("'"))) {
+            value = value.substring(1, value.length() - 1).trim();
+        }
 
-            String[] parts = value.split("\\.");
-            if (parts.length == 2) {
-                String objectName = parts[0].trim();
-                String propertyName = parts[1].trim();
+        // تجاهل العبارات التي لا تحتوي نقطة (object.property)
+        if (!value.contains(".")) return;
 
-                // تحقق من وجود object
-                if (!symbolTableContainsSymbol(symbolTable, objectName)) {
-                    int line = ctx.getStart().getLine();
-                    String error = "❌ Object '" + objectName + "' is not defined in any scope at line " + line;
-                    if (!SemanticCheck.Errors.contains(error)) {
-                        SemanticCheck.Errors.add(error);
-                       // System.out.println(error);
-                    }
-                    return;
+        // تجاهل العبارات المعقدة مثل: product?.image أو product?.image || 'default'
+        // يمكنك دعمها لاحقًا
+        if (value.contains("?") || value.contains(":") || value.contains("||")) return;
+
+        // تحليل القيمة: product.image
+        String[] parts = value.split("\\.");
+        if (parts.length == 2) {
+            String objectName = parts[0].trim();
+            String propertyName = parts[1].trim();
+
+            if (!symbolTableContainsSymbol(symbolTable, objectName)) {
+                int line = ctx.getStart().getLine();
+                String error = "❌Object '" + objectName + "' is not defined in any scope at line " + line;
+                if (!SemanticCheck.Errors.contains(error)) {
+                    SemanticCheck.Errors.add(error);
                 }
+                return;
+            }
 
-                // تحقق من وجود property
-                if (!symbolTableContainsProperty(symbolTable, objectName, propertyName)) {
-                    int line = ctx.getStart().getLine();
-                    String error = "❌ Property '" + propertyName + "' is not defined in object '" + objectName + "' at line " + line;
-                    if (!SemanticCheck.Errors.contains(error)) {
-                        SemanticCheck.Errors.add(error);
-                        //System.out.println(error);
-                    }
+            if (!symbolTableContainsProperty(symbolTable, objectName, propertyName)) {
+                int line = ctx.getStart().getLine();
+                String error = "❌Property '" + propertyName + "' is not defined in object '" + objectName + "' at line " + line;
+                if (!SemanticCheck.Errors.contains(error)) {
+                    SemanticCheck.Errors.add(error);
                 }
             }
         }
     }
+
 
     // دوال مساعدة للبحث في SymbolTable
     private boolean symbolTableContainsSymbol(SymbolTable symbolTable, String symbolName) {
@@ -134,25 +140,6 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         }
         return false;
     }
-
-
-    public static int levenshteinDistance(String a, String b) {
-        int[][] dp = new int[a.length() + 1][b.length() + 1];
-        for (int i = 0; i <= a.length(); i++) {
-            for (int j = 0; j <= b.length(); j++) {
-                if (i == 0) {
-                    dp[i][j] = j;
-                } else if (j == 0) {
-                    dp[i][j] = i;
-                } else {
-                    dp[i][j] = Math.min(dp[i - 1][j - 1] + (a.charAt(i - 1) == b.charAt(j - 1) ? 0 : 1),
-                            Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1));
-                }
-            }
-        }
-        return dp[a.length()][b.length()];
-    }
-
 
 
 
@@ -791,103 +778,6 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         checkStringAssignment(globalStack.peek(), ctx, symbolBase.getName(), symbolBase.getValue());
         return new HtmlContentBrace(tagName,contentHtml,htmlBrace);
     }
-  /* @Override
-   public HtmlContentBrace visitHtmlContentBrace(AngularParser.HtmlContentBraceContext ctx) {
-       System.out.println("🔹 HtmlContentBrace --------------------------------------------");
-
-       TagName tagName = (TagName) visit(ctx.tagName());
-       ContentHtml contentHtml = (ContentHtml) visit(ctx.contentHtml());
-
-       GlobalScope globalScope = new GlobalScope(null);
-       globalScope.setName("div Img:");
-       this.globalStack.push(globalScope);
-       this.symbolTable.addGlobalScope(globalScope);
-
-       SymbolBase symbolBase = new SymbolBase();
-       symbolBase.setName("Img");
-       symbolBase.setType("div");
-       globalScope.symbols.put(symbolBase.getName(), symbolBase);
-
-       HtmlBrace htmlBrace = (HtmlBrace) visit(ctx.htmlBrace());
-
-       // ✅ احصل على النص الكامل داخل htmlBrace
-       String rawText = ctx.htmlBrace().getText().trim();
-       System.out.println("🧪 raw htmlBrace text: " + rawText);
-
-       // ✅ تحقق من وجود بايندينغ
-       String bindingExpr = null;
-       if (rawText.startsWith("{{") && rawText.endsWith("}}")) {
-           bindingExpr = rawText.substring(2, rawText.length() - 2).trim(); // interpolation binding
-           System.out.println("🔍 Interpolation binding: " + bindingExpr);
-       } else if (rawText.startsWith("[") && rawText.contains("]=")) {
-           int equalsIndex = rawText.indexOf("]=");
-           bindingExpr = rawText.substring(equalsIndex + 2, rawText.length() - 1).trim(); // property binding
-           System.out.println("🔍 Property binding: " + bindingExpr);
-       } else if (rawText.startsWith("(") && rawText.contains(")=")) {
-           int equalsIndex = rawText.indexOf(")=");
-           bindingExpr = rawText.substring(equalsIndex + 2, rawText.length() - 1).trim(); // event binding
-           System.out.println("🔍 Event binding: " + bindingExpr);
-       } else {
-           System.out.println("⚠️ لا يحتوي على بايندينغ مدعوم، تم تجاهله.");
-           return new HtmlContentBrace(tagName, contentHtml, htmlBrace);
-       }
-
-       // ✅ تحليل مثل: product.imAge
-       if (bindingExpr != null && bindingExpr.contains(".")) {
-           String[] parts = bindingExpr.split("\\.");
-           if (parts.length == 2) {
-               String objectName = parts[0].trim();
-               String propertyName = parts[1].trim();
-
-               System.out.println("🔍 object: " + objectName);
-               System.out.println("🔍 property: " + propertyName);
-
-               Scope objectScope = this.symbolTable.getScopeByName(objectName);
-               if (objectScope != null) {
-                   List<? extends Symbol> symbols = objectScope.getSymbols();
-
-                   boolean found = false;
-                   List<String> knownNames = new ArrayList<>();
-
-                   for (Symbol s : symbols) {
-                       String name = s.getName();
-                       knownNames.add(name);
-                       if (name.equals(propertyName)) {
-                           found = true;
-                           break;
-                       }
-                   }
-
-                   if (!found) {
-                       String suggestion = null;
-                       int minDistance = Integer.MAX_VALUE;
-
-                       for (String knownName : knownNames) {
-                           int dist = levenshteinDistance(propertyName.toLowerCase(), knownName.toLowerCase());
-                           if (dist < minDistance && dist <= 2) {
-                               minDistance = dist;
-                               suggestion = knownName;
-                           }
-                       }
-
-                       String errorMsg = "❌ Undeclared property '" + propertyName + "'";
-                       if (suggestion != null) {
-                           errorMsg += " — did you mean '" + suggestion + "'?";
-                       }
-                       SemanticCheck.Errors.add(errorMsg);
-                   }
-               } else {
-                   System.out.println("⚠️ لم يتم العثور على Scope للكائن: " + objectName);
-               }
-           }
-       }
-
-       return new HtmlContentBrace(tagName, contentHtml, htmlBrace);
-   }
-*/
-
-
-
 
     @Override
     public HtmlImgAttribute visitHtmlImgAttribute(AngularParser.HtmlImgAttributeContext ctx) {
@@ -985,7 +875,7 @@ public class BaseVisitor extends AngularParserBaseVisitor {
             htmlAttributes.getTagName().add((TagName) visit(ctx.tagName(i)));
         }
         String value = ctx.getText(); // أو طريقة جلب قيمة binding داخل الـ attribute
-       // checkBinding(value, ctx, symbolTable);
+        checkBinding(value, ctx, symbolTable);
         return htmlAttributes;
     }
 
