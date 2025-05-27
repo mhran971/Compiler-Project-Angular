@@ -13,8 +13,6 @@ import java.util.*;
 import static SemanticError.BindingChecker.checkBinding;
 import static SemanticError.CheckStringAssignment.checkStringAssignment;
 
-
-
 public class BaseVisitor extends AngularParserBaseVisitor {
     SymbolTable symbolTable;
     SymbolBase symbolBase;
@@ -29,7 +27,6 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         this.globalStack = new Stack<>();
         this.localStack = new Stack<>();
     }
-
     @Override
   public Program visitProgram(AngularParser.ProgramContext ctx) {
       Program program = new Program();
@@ -42,7 +39,6 @@ public class BaseVisitor extends AngularParserBaseVisitor {
       }
       return program;
   }
-
     @Override
     public SourceElements visitSourceElements(AngularParser.SourceElementsContext ctx) {
         SourceElements sourceElements=new SourceElements();
@@ -53,14 +49,12 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         }
         return sourceElements;
     }
-
     @Override
     public ImportStatement visitImportStatement(AngularParser.ImportStatementContext ctx) {
         ImportStatement importStatement = new ImportStatement();
         importStatement.setImportFromBlock((ImportFromBlock) visit(ctx.importFromBlock()));
         return importStatement;
     }
-
     @Override
     public DefaultImport visitDefaultImport(AngularParser.DefaultImportContext ctx) {
         ImportDefault importDefault=null;
@@ -70,22 +64,18 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         ImportFrom importFrom=(ImportFrom) visit(ctx.importFrom());
         return new DefaultImport(importDefault,importFrom);
     }
-
-
     @Override
     public NamespaceImport visitNamespaceImport(AngularParser.NamespaceImportContext ctx) {
         ReservedWord reservedWord= (ReservedWord) visit(ctx.reservedWord());
         ImportFrom importFrom=(ImportFrom) visit(ctx.importFrom());
         return new NamespaceImport(reservedWord, importFrom);
     }
-
     @Override
     public ImportFrom visitImportFrom(AngularParser.ImportFromContext ctx) {
         ImportFrom importFrom=new ImportFrom();
         importFrom.setStringLiteral((StringLiteral) visit(ctx.stringLiteral()));
         return importFrom;
     }
-
     @Override
     public ImportDefault visitImportDefault(AngularParser.ImportDefaultContext ctx) {
         ImportDefault importDefault=new ImportDefault();
@@ -104,7 +94,6 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         }
         return importNamespace;
     }
-
     @Override
     public  CommaReservedWord visitCommaReservedWord(AngularParser.CommaReservedWordContext ctx) {
         CommaReservedWord commaReservedWord=new CommaReservedWord();
@@ -124,60 +113,32 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         symbolBase.setValue("InterfaceAttributes");
         symbolBase.setType("interface");
         globalScope.symbols.put(ctx.Interface().getText(),symbolBase);
-
         InterfaceStatement interfaceStatement = new InterfaceStatement();
         if (ctx.Interface() != null) {
             interfaceStatement.setInterface(ctx.Interface().getText());
         }
-
         for (int i = 0; i < ctx.declarationName().size(); i++) {
             interfaceStatement.getDeclarationName().add((DeclarationName) visit(ctx.declarationName(i)));
         }
-
         if (ctx.keyword() != null) {
             interfaceStatement.setKeyword((Keyword) visit(ctx.keyword()));
         }
-
         interfaceStatement.setInterfaceAttributes((InterfaceAttributes) visit(ctx.interfaceAttributes()));
-
         return interfaceStatement;
     }
-
     @Override
     public InterfaceAttributes visitInterfaceAttributes(AngularParser.InterfaceAttributesContext ctx) {
-
         InterfaceAttributes interfaceAttributes=new InterfaceAttributes();
         for(int i=0;i<ctx.propertyDeclaration().size();i++){
             interfaceAttributes.getPropertyDeclaration().add((PropertyDeclaration) visit(ctx.propertyDeclaration(i)));
         }
-
         return interfaceAttributes;
     }
-
-   /* @Override
-    public AttributesProperty visitAttributesProperty(AngularParser.AttributesPropertyContext ctx) {
-        Type type=(Type) visit(ctx.type());
-        DeclarationName declarationName=(DeclarationName) visit(ctx.declarationName());
-        BaseScope scope = !localStack.isEmpty() ? localStack.peek() : globalStack.peek();
-        SymbolBase symbolBase = new SymbolBase();
-        symbolBase.setName(declarationName.getSTRING());
-        symbolBase.setType(ctx.type().getText());
-
-        try {
-            scope.define(symbolBase);
-        } catch (IllegalArgumentException e) {
-            System.err.println("Error defining symbol: " + e.getMessage());
-        }
-        scope.symbols.put(symbolBase.getName(), symbolBase);
-        return new AttributesProperty(declarationName,type);
-    }
-*/
    @Override
    public AttributesProperty visitAttributesProperty(AngularParser.AttributesPropertyContext ctx) {
        Type type = (Type) visit(ctx.type());
        DeclarationName declarationName = (DeclarationName) visit(ctx.declarationName());
        BaseScope scope = !localStack.isEmpty() ? localStack.peek() : globalStack.peek();
-
        SymbolBase symbolBase = new SymbolBase();
        symbolBase.setName(declarationName.getSTRING());
        symbolBase.setType(ctx.type().getText());
@@ -186,7 +147,6 @@ public class BaseVisitor extends AngularParserBaseVisitor {
        } catch (IllegalArgumentException e) {
            int line = ctx.getStart().getLine();
            String errorMsg = "❌Variable <"+symbolBase.getName()+"> is already declared at line " + line;
-          // String errorMsg = "❌Duplicate symbol '" + symbolBase.getName() + "' at line " + line;
            if (!SemanticCheck.Errors.contains(errorMsg)) {
                SemanticCheck.Errors.add(errorMsg);
            }
@@ -194,14 +154,12 @@ public class BaseVisitor extends AngularParserBaseVisitor {
        scope.symbols.put(symbolBase.getName(), symbolBase);
        return new AttributesProperty(declarationName, type);
    }
-
     @Override
     public AttributesProperty visitMethodProperty(AngularParser.MethodPropertyContext ctx) {
         Type type=(Type) visit(ctx.type());
         DeclarationName declarationName=(DeclarationName) visit(ctx.declarationName());
         return new AttributesProperty(declarationName,type);
     }
-
    @Override
    public ComponentStatement visitComponentStatement(AngularParser.ComponentStatementContext ctx) {
        ComponentStatement componentStatement = new ComponentStatement();
@@ -216,7 +174,6 @@ public class BaseVisitor extends AngularParserBaseVisitor {
        globalScope.symbols.put(ctx.reservedWord().getText(), symbolBase);
        componentStatement.setComponent(ctx.reservedWord().getText());
        componentStatement.setComponentOptions((ComponentOptions) visit(ctx.componentOptions()));
-
        boolean hasSelector = false;
        for (String key : globalScope.symbols.keySet()) {
            if (key.equals("selector")) {
@@ -233,12 +190,9 @@ public class BaseVisitor extends AngularParserBaseVisitor {
        }
        return componentStatement;
    }
-
-
     @Override
     public ComponentOptions visitComponentOptions(AngularParser.ComponentOptionsContext ctx) {
         ComponentOptions componentOptions=new ComponentOptions();
-
         for(int i=0;i<ctx.componentOption().size();i++){
             if(ctx.componentOption(i)!=null){
                 componentOptions.getComponentOption().add((ComponentOption) visit(ctx.componentOption(i)));
@@ -291,13 +245,10 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         }
         return importsProperties;
     }
-
     @Override
     public ReservedWordAndComma visitReservedWordAndComma(AngularParser.ReservedWordAndCommaContext ctx) {
         ReservedWordAndComma reservedWordAndComma=new ReservedWordAndComma();
         reservedWordAndComma.setReservedWord((ReservedWord) visit(ctx.reservedWord()));
-        SymbolBase symbolBase = new SymbolBase();
-
         return reservedWordAndComma;
     }
     @Override
@@ -313,14 +264,11 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         scope.symbols.put(symbolBase.getName(), symbolBase);
         return optiontemplateUrl;
     }
-
     @Override
     public UrlStatement visitUrlStatement(AngularParser.UrlStatementContext ctx) {
         BaseScope scope = !localStack.isEmpty() ? localStack.peek() : globalStack.peek();
         UrlStatement urlStatement=new UrlStatement();
         SymbolBase symbolBase = new SymbolBase();
-
-
         if (ctx.TemplateUrl()!=null){
             urlStatement.setTemplateUrl(ctx.TemplateUrl().getText());
             symbolBase.setName(ctx.TemplateUrl().getText());
@@ -334,8 +282,6 @@ public class BaseVisitor extends AngularParserBaseVisitor {
             symbolBase.setType("stringLiteral");
         }
         scope.symbols.put(symbolBase.getName(), symbolBase);
-
-
         return urlStatement;
     }
 
@@ -353,12 +299,8 @@ public class BaseVisitor extends AngularParserBaseVisitor {
             symbolBase.setType("stringLiteral");
         }
         scope.symbols.put(symbolBase.getName(), symbolBase);
-
         return optionStyleUrls;
     }
-
-
-
     @Override
     public ExportStatement visitExportStatement(AngularParser.ExportStatementContext ctx) {
         ExportStatement exportStatement=new ExportStatement();
@@ -376,7 +318,6 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         for(int i=0;i<ctx.classBody().size();i++){
             if(ctx.classBody(i)!=null){
                 exportStatement.getClassBody().add((ClassBody) visit(ctx.classBody(i)));
-
             }
         }
         return exportStatement;
@@ -390,10 +331,8 @@ public class BaseVisitor extends AngularParserBaseVisitor {
             propertyDeclarationCom=(PropertyDeclarationCom) visit(ctx.propertyDeclarationCom());
         }
         MethodDeclaration methodDeclaration=(MethodDeclaration) visit(ctx.methodDeclaration());
-
         return new FullClassBody(propertyList,propertyDeclarationCom,methodDeclaration);
     }
-
     @Override
     public PropertyString visitPropertyString(AngularParser.PropertyStringContext ctx) {
         DeclarationName declarationName=(DeclarationName) visit(ctx.declarationName());
@@ -410,7 +349,6 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         symbolBase.setName(ctx.declarationName().getText());
         symbolBase.setValue("Products:");
         symbolBase.setType(ctx.STRING().getText());
-
         if (ctx.STRING()!=null){
             propertyList.setSTRING(ctx.STRING().getText());
         }
@@ -423,8 +361,6 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         scope.symbols.put(symbolBase.getName(), symbolBase);
         return propertyList;
     }
-
-
     @Override
     public BodyList visitBodyList(AngularParser.BodyListContext ctx) {
         BodyList bodyList = new BodyList();
@@ -439,9 +375,6 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         this.globalStack.pop();
         return bodyList;
     }
-
-
-
    @Override
     public BodyListInner visitBodyListinner(AngularParser.BodyListinnerContext ctx) {
         BaseScope scope = !localStack.isEmpty() ? localStack.peek() : globalStack.peek();
@@ -456,12 +389,8 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         symbolBase.setType("string");
         scope.symbols.put(symbolBase.getName(), symbolBase);
        checkStringAssignment(scope, ctx, symbolBase.getName(), symbolBase.getValue());
-
        return bodyListinner;
     }
-
-
-
     @Override
     public PropertyDeclarationCom visitPropertyDeclarationCom(AngularParser.PropertyDeclarationComContext ctx) {
         PropertyDeclarationCom propertyDeclarationCom=new PropertyDeclarationCom();
@@ -477,7 +406,6 @@ public class BaseVisitor extends AngularParserBaseVisitor {
     @Override
     public MethodDeclaration visitMethodDeclaration(AngularParser.MethodDeclarationContext ctx) {
         MethodDeclaration  methodDeclaration=new MethodDeclaration();
-
         GlobalScope globalScope = new GlobalScope(null);
         globalScope.setName("Method Scope:");
         this.globalStack.push(globalScope);
@@ -496,12 +424,9 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         methodDeclaration.setMethodBody((MethodBody) visit(ctx.methodBody()));
         if (ctx.declarationName() != null) {
             FunctionDuplicate.isFunctionDuplicate(methodDeclaration.getDeclarationName().getSTRING(), ctx, globalStack);
-
         }
-
         return methodDeclaration;
     }
-
     @Override
     public ParameterList visitParameterList(AngularParser.ParameterListContext ctx) {
         ParameterList parameterList=new ParameterList();
@@ -513,14 +438,12 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         }
         return parameterList;
     }
-
     @Override
     public ParameterComma visitParameterComma(AngularParser.ParameterCommaContext ctx) {
         ParameterComma parameterComma=new ParameterComma();
         parameterComma.setParameter((Parameter) visit(ctx.parameter()));
         return parameterComma;
     }
-
     @Override
     public Parameter visitParameter(AngularParser.ParameterContext ctx) {
         Parameter parameter=new Parameter();
@@ -528,7 +451,6 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         parameter.setDeclarationString((DeclarationString) visit(ctx.declarationString()));
         return parameter;
     }
-
     @Override
     public  MethodBody visitMethodBody(AngularParser.MethodBodyContext ctx) {
         MethodBody methodBody=new MethodBody();
@@ -539,7 +461,6 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         }
         return methodBody;
     }
-
     @Override
     public StatementMethod visitStatementMethod(AngularParser.StatementMethodContext ctx) {
         StatementMethod statementMethod=new StatementMethod();
@@ -562,7 +483,6 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         htmlElements.setHtmlElement((HtmlElement) visit(ctx.htmlElement()));
         return htmlElements ;
     }
-
     @Override
     public HtmlElement visitHtmlElement(AngularParser.HtmlElementContext ctx) {
         HtmlElement htmlElement=new HtmlElement();
@@ -601,17 +521,14 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         }
         return htmlTagNameStart;
     }
-
     @Override
     public HtmlTagNameEnd visitHtmlTagNameEnd(AngularParser.HtmlTagNameEndContext ctx) {
         HtmlTagNameEnd htmlTagNameEnd=new HtmlTagNameEnd();
         htmlTagNameEnd.setTagName((TagName) visit(ctx.tagName()));
         return htmlTagNameEnd;
     }
-
     @Override
     public NestedHtml visitNestedHtml(AngularParser.NestedHtmlContext ctx) {
-
          Elements elements=(Elements) visit(ctx.elements());
         List<TagName> tagNames = new ArrayList<TagName>();
         for (int i = 0; i < ctx.tagName().size(); i++) {
@@ -622,7 +539,6 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         }
         return new NestedHtml(tagNames,elements) ;
     }
-
     @Override
     public HtmlContentMany visitHtmlContentMany(AngularParser.HtmlContentManyContext ctx) {
         TagName tagName = (TagName) visit(ctx.tagName());
@@ -635,10 +551,8 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         }
         return new HtmlContentMany(tagName, contentHtmls);
     }
-
     @Override
     public HtmlContentBrace visitHtmlContentBrace(AngularParser.HtmlContentBraceContext ctx) {
-        //BaseScope scope = !localStack.isEmpty() ? localStack.peek() : globalStack.peek();
         TagName tagName=(TagName) visit(ctx.tagName());
         ContentHtml contentHtml=(ContentHtml) visit(ctx.contentHtml());
         GlobalScope globalScope = new GlobalScope(null);
@@ -648,13 +562,10 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         SymbolBase symbolBase = new SymbolBase();
         symbolBase.setName("Img");
         symbolBase.setType("div");
-        //symbolBase.setValue(ctx.contentHtml().getText()+" "+ctx.htmlBrace().getText());
         globalScope.symbols.put(symbolBase.getName(),symbolBase);
         HtmlBrace htmlBrace=(HtmlBrace) visit(ctx.htmlBrace());
-        //checkStringAssignment(globalStack.peek(), ctx, symbolBase.getName(), symbolBase.getValue());
         return new HtmlContentBrace(tagName,contentHtml,htmlBrace);
     }
-
     @Override
     public HtmlImgAttribute visitHtmlImgAttribute(AngularParser.HtmlImgAttributeContext ctx) {
         HtmlImgAttribute htmlImgAttribute=new HtmlImgAttribute();
@@ -662,7 +573,6 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         htmlImgAttribute.setStringLiteral((StringLiteral) visit(ctx.stringLiteral()));
         return htmlImgAttribute;
     }
-
     @Override
     public HtmlImgAttribute2 visitHtmlImgAttribute2(AngularParser.HtmlImgAttribute2Context ctx) {
         BaseScope scope = !localStack.isEmpty() ? localStack.peek() : globalStack.peek();
@@ -671,7 +581,6 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         SymbolBase symbolBase = new SymbolBase();
         symbolBase.setName(ctx.htmlKeyword().getText());
         symbolBase.setValue(ctx.stringLiteral().getText());
-        //symbolBase.setType(ctx.STRING().getText());
         scope.symbols.put(symbolBase.getName(), symbolBase);
         return new HtmlImgAttribute2(htmlKeyword,stringLiteral);
     }
@@ -684,12 +593,9 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         SymbolBase symbolBase = new SymbolBase();
         symbolBase.setName(ctx.htmlKeyword().getText());
         symbolBase.setValue(ctx.stringLiteral().getText());
-        //symbolBase.setType(ctx.STRING().getText());
         scope.symbols.put(symbolBase.getName(), symbolBase);
-
         return new HtmlImgAttribute3(htmlKeyword,stringLiteral);
     }
-
     @Override
     public  HtmlImgAttribute4 visitHtmlImgAttribute4(AngularParser.HtmlImgAttribute4Context ctx) {
         BaseScope scope = !localStack.isEmpty() ? localStack.peek() : globalStack.peek();
@@ -698,14 +604,11 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         SymbolBase symbolBase = new SymbolBase();
         symbolBase.setName(ctx.keyword().getText());
         symbolBase.setValue(ctx.stringLiteral().getText());
-        //symbolBase.setType(ctx.keyword().getText());
         scope.symbols.put(symbolBase.getName(), symbolBase);
         return new HtmlImgAttribute4(keyword,stringLiteral);
     }
-
     @Override
     public ComplexHtmlAttr visitComplexHtmlAttr(AngularParser.ComplexHtmlAttrContext ctx) {
-        //keyword Assign stringLiteral Star htmlKeyword Assign stringLiteral
         Keyword keyword=(Keyword) visit(ctx.keyword());
         HtmlKeyword htmlKeyword=(HtmlKeyword) visit(ctx.htmlKeyword());
         List<StringLiteral>stringLiterals=new ArrayList<StringLiteral>();
@@ -717,14 +620,10 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         }
         return new ComplexHtmlAttr(keyword,stringLiterals,htmlKeyword);
     }
-
     @Override
     public ReservedBlock visitReservedBlock(AngularParser.ReservedBlockContext ctx) {
-
         ReservedWord reservedWord=(ReservedWord) visit(ctx.reservedWord());
         StringLiteral stringLiteral=(StringLiteral) visit(ctx.stringLiteral());
-
-
         List<Identifier> identifiers = new ArrayList<Identifier>();
         for (int i = 0; i < ctx.identifier().size(); i++) {
             Identifier identifier = (Identifier) visit(ctx.identifier(i));
@@ -732,7 +631,6 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         }
         return new ReservedBlock(reservedWord,stringLiteral,identifiers);
     }
-
     @Override
     public  HtmlBrace visitHtmlBrace(AngularParser.HtmlBraceContext ctx) {
         HtmlBrace htmlBrace=new HtmlBrace();
@@ -750,11 +648,10 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         for(int i=0;i<ctx.tagName().size();i++){
             htmlAttributes.getTagName().add((TagName) visit(ctx.tagName(i)));
         }
-        String value = ctx.getText(); // أو طريقة جلب قيمة binding داخل الـ attribute
+        String value = ctx.getText();
         checkBinding(value, ctx, symbolTable);
         return htmlAttributes;
     }
-
     @Override
     public CssElement visitCssElement(AngularParser.CssElementContext ctx) {
         CssElement cssElement=new CssElement();
@@ -773,7 +670,6 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         }
         return cssElement;
     }
-
     @Override
     public Selector visitSelector(AngularParser.SelectorContext ctx) {
         Selector selector=new Selector();
@@ -787,7 +683,6 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         }
         return selector;
     }
-
     @Override
     public SelectorInternal visitSelectorInternal(AngularParser.SelectorInternalContext ctx) {
         SelectorInternal selectorInternal=new SelectorInternal();
@@ -796,7 +691,6 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         }
         return  selectorInternal;
     }
-
     @Override
     public  CssProperty visitCssProperty(AngularParser.CssPropertyContext ctx) {
         CssProperty cssProperty=new CssProperty();
@@ -804,7 +698,6 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         cssProperty.setCssValue((CssValue) visit(ctx.cssValue()));
         return cssProperty;
     }
-
     @Override
     public Css visitCss(AngularParser.CssContext ctx) {
         Css css=new Css();
@@ -852,20 +745,9 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         }
         return css;
     }
-
     @Override
     public CssValue visitCssValue(AngularParser.CssValueContext ctx) {
         CssValue cssValue=new CssValue();
-      /*  cssValue.setDecimalLiteral_UNIT((DecimalLiteral_UNIT) visit(ctx.decimalLiteral_UNIT()));
-        cssValue.setRow(ctx.Row().getText());
-        cssValue.setFlex(ctx.Flex().getText());
-        cssValue.setBorder_Box(ctx.Border_Box().getText());
-        cssValue.setCenter(ctx.Center().getText());
-        cssValue.setColumn(ctx.Column().getText());
-        cssValue.setAuto(ctx.Auto().getText());
-        cssValue.setPointer(ctx.Pointer().getText());
-        cssValue.setHEXCHAR(ctx.HEXCHAR().getText());
-        cssValue.setSTRING(ctx.STRING().getText());*/
        if(ctx.decimalLiteral_UNIT()!=null){
             cssValue.setDecimalLiteral_UNIT((DecimalLiteral_UNIT) visit(ctx.decimalLiteral_UNIT()));
         }
@@ -875,7 +757,6 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         if(ctx.Row()!=null){
             cssValue.setRow(ctx.Row().getText());
         }
-
         if(ctx.Border_Box()!=null){
             cssValue.setBorder_Box(ctx.Border_Box().getText());
         }
@@ -887,7 +768,6 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         }
         if(ctx.Auto()!=null){
             cssValue.setAuto(ctx.Auto().getText());
-
         }
         if(ctx.Pointer()!=null){
             cssValue.setPointer(ctx.Pointer().getText());
@@ -895,10 +775,8 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         if(ctx.HEXCHAR()!=null){
             cssValue.setHEXCHAR(ctx.HEXCHAR().getText());
         }
-
         return  cssValue;
     }
-
     @Override
     public UnitNumberList visitUnitNumberList(AngularParser.UnitNumberListContext ctx) {
         //decimalLiteralUnit decimalLiteral*
@@ -922,7 +800,6 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         decimalLiteralUnit.setDecimalLiteral_UNIT(ctx.DecimalLiteral_UNIT().getText());
         return  decimalLiteralUnit;
     }
-
     @Override
     public DecimalLiteral visitDecimalLiteral(AngularParser.DecimalLiteralContext ctx) {
         DecimalLiteral decimalLiteral=new DecimalLiteral();
@@ -934,7 +811,6 @@ public class BaseVisitor extends AngularParserBaseVisitor {
     @Override
     public TagName visitTagName(AngularParser.TagNameContext ctx) {
         TagName tagName = new TagName();
-
         if (ctx.H1() != null) {
             tagName.setH1(ctx.H1().getText());
         }
@@ -971,11 +847,8 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         if (ctx.Button() != null) {
             tagName.setButton(ctx.Button().getText());
         }
-
         return tagName;
     }
-
-
     @Override
     public HtmlKeyword visitHtmlKeyword(AngularParser.HtmlKeywordContext ctx) {
         HtmlKeyword htmlKeyword=new HtmlKeyword();
@@ -990,12 +863,7 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         }
         if (ctx.SRC()!=null){
             htmlKeyword.setSRC(ctx.SRC().getText());
-
         }
-
-
-
-
         return htmlKeyword;
     }
     @Override
@@ -1040,73 +908,41 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         }
         return type;
     }
-
     @Override
     public ReservedWord visitReservedWord(AngularParser.ReservedWordContext ctx) {
-
-        //DeclarationName declarationName = (DeclarationName) visit(ctx.declarationName(0));
-       // symbolBase.setName(declarationName.getSTRING());
-
-       // globalScope.symbols.put(ctx.Interface().getText(),symbolBase);
         ReservedWord reservedWord=new ReservedWord();
-
         if (ctx.Angular()!=null){
             reservedWord.setAngular(ctx.Angular().getText());
-            /*symbolBase.setName(ctx.Angular().getText());
-            globalScope.symbols.put(ctx.Angular().getText(),symbolBase);*/
         }
         if (ctx.AngularCore()!=null){
             reservedWord.setAngularCore(ctx.AngularCore().getText());
-           /* symbolBase.setName(ctx.AngularCore().getText());
-            globalScope.symbols.put(ctx.AngularCore().getText(),symbolBase);*/
         }
         if (ctx.Component()!=null){
             reservedWord.setComponent(ctx.Component().getText());
-          /*  symbolBase.setName(ctx.Component().getText());
-            globalScope.symbols.put(ctx.Component().getText(),symbolBase);*/
         }
         if (ctx.RouterOutlet()!=null){
             reservedWord.setRouterOutlet(ctx.RouterOutlet().getText());
-         /*   symbolBase.setName(ctx.RouterOutlet().getText());
-            globalScope.symbols.put(ctx.RouterOutlet().getText(),symbolBase);*/
         }
         if (ctx.CommonModule()!=null){
             reservedWord.setCommonModule(ctx.CommonModule().getText());
-   /*            GlobalScope globalScope = new GlobalScope(null);
-            globalScope.setName("Import Scope:");
-            this.globalStack.push(globalScope);
-            this.symbolTable.addGlobalScope(globalScope);
-            SymbolBase symbolBase = new SymbolBase();
-            symbolBase.setValue("ReservedWord:");
-            symbolBase.setType("String");
-            symbolBase.setName(ctx.CommonModule().getText());
-            globalScope.symbols.put(ctx.CommonModule().getText(),symbolBase);*/
         }
         if (ctx.Input()!=null){
             reservedWord.setInput(ctx.Input().getText());
-            /*symbolBase.setName(ctx.Input().getText());
-            globalScope.symbols.put(ctx.Input().getText(),symbolBase);*/
         }
         if (ctx.OnInit()!=null){
             reservedWord.setOnInit(ctx.OnInit().getText());
-         /*   symbolBase.setName(ctx.OnInit().getText());
-            globalScope.symbols.put(ctx.OnInit().getText(),symbolBase);*/
         }
         if (ctx.Click()!=null){
             reservedWord.setClick(ctx.Click().getText());
-            /*symbolBase.setName(ctx.Click().getText());
-            globalScope.symbols.put(ctx.Click().getText(),symbolBase);*/
         }
         return reservedWord;
     }
-
     @Override
     public StringLiteral visitStringLiteral(AngularParser.StringLiteralContext ctx) {
         StringLiteral stringLiteral=new StringLiteral();
         if(ctx.StringLiteral()!=null){
             stringLiteral.setStringLiteral(ctx.StringLiteral().getText());
         }
-
         return stringLiteral;
     }
     @Override
@@ -1186,5 +1022,4 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         }
         return keyword;
     }
-
 }
