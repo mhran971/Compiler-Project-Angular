@@ -23,17 +23,11 @@ public class Main {
         AngularParser parser = new AngularParser(token);
         parser.removeErrorListeners();
         lexer.removeErrorListeners();
-        parser.addErrorListener(new BaseErrorListener() {
-            @Override
-            public void syntaxError(Recognizer<?, ?> recognizer,
-             Object offendingSymbol,
-             int line,
-             int charPositionInLine,
-             String msg, RecognitionException e) {}});
+        parser.addErrorListener(SyntaxError.INSTANCE);
+        lexer.addErrorListener(SyntaxError.INSTANCE);
         ParseTree tree = parser.program();
         BaseVisitor visitor = new BaseVisitor();
         Program prog = (Program) visitor.visit(tree);
-
         SymbolTable symbolTable = visitor.getSymbolTable();
         System.out.println("🔶Abstract parse tree(AST):\n" + prog);
         System.out.println("\n🔶🔶Symbol table:");
@@ -49,6 +43,8 @@ public class Main {
         System.out.println("Number of Scope: " + symbolTable.getGlobalScopes().size());
         SemanticCheck semanticCheck = new SemanticCheck();
         semanticCheck.checkErrors();
+
+
     }
 }
 

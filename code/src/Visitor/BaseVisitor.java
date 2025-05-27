@@ -202,24 +202,6 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         return new AttributesProperty(declarationName,type);
     }
 
-   /* @Override
-    public ComponentStatement visitComponentStatement(AngularParser.ComponentStatementContext ctx) {
-        ComponentStatement componentStatement=new ComponentStatement();
-        BaseScope scope = !localStack.isEmpty() ? localStack.peek() : globalStack.peek();
-        GlobalScope globalScope = new GlobalScope(null);
-        globalScope.setName("Component Scope:");
-        this.globalStack.push(globalScope);
-        this.symbolTable.addGlobalScope(globalScope);
-        SymbolBase symbolBase = new SymbolBase();
-         symbolBase.setName(ctx.reservedWord().getText());
-        symbolBase.setValue("ComponentOptions:");
-         symbolBase.setType(ctx.reservedWord().getText());
-         globalScope.symbols.put(ctx.reservedWord().getText(),symbolBase);
-
-        componentStatement.setComponent(ctx.reservedWord().getText());
-        componentStatement.setComponentOptions((ComponentOptions) visit(ctx.componentOptions()));
-        return componentStatement;
-    }*/
    @Override
    public ComponentStatement visitComponentStatement(AngularParser.ComponentStatementContext ctx) {
        ComponentStatement componentStatement = new ComponentStatement();
@@ -247,7 +229,6 @@ public class BaseVisitor extends AngularParserBaseVisitor {
            String errorMsg = "❌Component is missing selector at line " + line;
            if (!SemanticCheck.Errors.contains(errorMsg)) {
                SemanticCheck.Errors.add(errorMsg);
-              // System.out.println(errorMsg);
            }
        }
        return componentStatement;

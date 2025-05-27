@@ -1,7 +1,7 @@
 ////////////////TypeScript/////////////
 
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { CommonModule  from '@angular/common'
+import { Component } from '@angular/core'
 import { RouterOutlet } from '@angular/router';
 
 
@@ -89,7 +89,7 @@ export class AppComponent {
       [src]='selectedProduct.image'
       alt='صورة المنتج'
       class='product-image'
-    />
+    /
     <p>{{ selectedProduct?.details  }}</p>
   </div>
 
