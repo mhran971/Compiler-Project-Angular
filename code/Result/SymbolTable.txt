@@ -1,18 +1,18 @@
 Scope: global-program:
 Scope: Interface Scope:
-  Symbol → Name:Product  , Type: interface  , Value: InterfaceAttributes
-  Symbol → Name:id       , Type: string     , Value: N/A                
-  Symbol → Name:name     , Type: string     , Value: N/A                
-  Symbol → Name:image    , Type: string     , Value: N/A                
-  Symbol → Name:details  , Type: string     , Value: N/A                
+  Symbol → Name:Product  , Type: interface  , Value: InterfaceAttributes:
+  Symbol → Name:id       , Type: string     , Value: N/A                 
+  Symbol → Name:name     , Type: string     , Value: N/A                 
+  Symbol → Name:image    , Type: string     , Value: N/A                 
+  Symbol → Name:details  , Type: string     , Value: N/A                 
 Scope: Interface Scope:
-  Symbol → Name:Item  , Type: interface  , Value: InterfaceAttributes
-  Symbol → Name:id    , Type: number     , Value: N/A                
+  Symbol → Name:Item  , Type: interface  , Value: InterfaceAttributes:
+  Symbol → Name:id    , Type: number     , Value: N/A                 
 Scope: Component Scope:
   Symbol → Name:Component    , Type: Component      , Value: ComponentOptions:          
   Symbol → Name:imports      , Type: ReservedWord:  , Value: [RouterOutlet,CommonModule]
-  Symbol → Name:templateUrl  , Type: stringLiteral  , Value: './app.component.html'     
-  Symbol → Name:styleUrls    , Type: stringLiteral  , Value: styleUrls                  
+  Symbol → Name:templateUrl  , Type: ReservedWord:  , Value: './app.component.html'     
+  Symbol → Name:styleUrls    , Type: ReservedWord:  , Value: styleUrls                  
 Scope: Export Scope:
   Symbol → Name:AppComponent  , Type: class    , Value: ClassBody:
   Symbol → Name:products      , Type: Product  , Value: Products: 

@@ -1,9 +1,6 @@
 package SymbolTable.Symbol;
-
 import SymbolTable.Scope.Scope;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class SymbolBase implements Symbol{
 
@@ -49,7 +46,6 @@ public class SymbolBase implements Symbol{
     @Override
     public int getInsertionOrderNumber() {
         return insertionOrderNumber;
-        //return 0;
     }
 
     @Override

@@ -3,9 +3,6 @@ package SymbolTable.Scope;
 
 public class LocalScope extends BaseScope {
 
-
-    /** A scope object typically associated with {...} code blocks */
-
     public LocalScope(Scope enclosingScope) {
         super(enclosingScope);
     }

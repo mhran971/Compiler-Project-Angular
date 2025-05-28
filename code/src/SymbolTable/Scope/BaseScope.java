@@ -1,33 +1,17 @@
 package SymbolTable.Scope;
-
 import SymbolTable.Symbol.Symbol;
-import SymbolTable.Symbol.SymbolBase;
-
 import java.util.*;
 
 public abstract class BaseScope implements Scope {
-    /**/
+
     protected String name;//scope name EX:global or function for
     protected String value;
     protected String type;
-
-    // protected String id;//scope id
-    /**
-     * point to parent scope
-     * it can be {@code null} if there is no parent
-     */
     protected Scope enclosingScope;// Parent Scope
-    /**
-     * scope symbols
-     */
-   /* Map<String, List<SymbolBase>> symbol = new LinkedHashMap<>();
-    symbols.computeIfAbsent(symbolBase.getName(), k -> new ArrayList<>()).add(symbolBase);*/
 
     public Map<String, Symbol> symbols = new LinkedHashMap<>();// Symbol in this scope only Name:Value
     //all nested scopes, does not include scoped symbols Ex:while,blocks,if
     protected List<Scope> nestedScopesNotSymbols = new ArrayList<>();
-
-
 
     public String getValue() {
         return value;
@@ -45,10 +29,10 @@ public abstract class BaseScope implements Scope {
         this.type = type;
     }
 
+    //The outer scope is defined directly when an object is created.
     public BaseScope(Scope enclosingScope) {
         setEnclosingScope(enclosingScope);
-    }//The outer scope is defined directly when an object is created.
-
+    }
 
     @Override
     public String getName() {
@@ -59,16 +43,6 @@ public abstract class BaseScope implements Scope {
     public void setName(String name) {
         this.name = name;
     }
-
-//    @Override
-//    public String getId() {
-//        return this.id;
-//    }
-//
-//    @Override
-//    public void setId(String id) {
-//        this.id = id;
-//    }
 
     @Override
     public Symbol getSymbol(String name) {
@@ -87,10 +61,6 @@ public abstract class BaseScope implements Scope {
         return all;
     }
 
-    /**
-     * Add a nested scope to this scope; could also be a FunctionSymbol
-     * if your language allows nested functions.
-     */
     @Override
     public void nest(Scope scope) throws IllegalArgumentException {
         nestedScopesNotSymbols.add(scope);
@@ -130,17 +100,10 @@ public abstract class BaseScope implements Scope {
         symbols.put(sym.getName(), sym);
     }
 
-
-
-
     public Scope getEnclosingScope() {
         return enclosingScope;
     }
-    /**
-     * Walk up enclosingScope until we find topmost. Note this is
-     * enclosing scope not necessarily parent. This will usually be
-     * a global scope or something, depending on your scope tree.
-     */
+
     public Scope getOuterMostEnclosingScope() {
         Scope s = this;
         while (s.getEnclosingScope() != null) {

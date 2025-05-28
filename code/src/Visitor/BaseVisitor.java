@@ -102,7 +102,6 @@ public class BaseVisitor extends AngularParserBaseVisitor {
     }
     @Override
     public InterfaceStatement visitInterfaceStatement(AngularParser.InterfaceStatementContext ctx) {
-        BaseScope scope = !localStack.isEmpty() ? localStack.peek() : globalStack.peek();
         GlobalScope globalScope = new GlobalScope(null);
         globalScope.setName("Interface Scope:");
         this.globalStack.push(globalScope);
@@ -110,8 +109,8 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         SymbolBase symbolBase = new SymbolBase();
         DeclarationName declarationName = (DeclarationName) visit(ctx.declarationName(0));
         symbolBase.setName(declarationName.getSTRING());
-        symbolBase.setValue("InterfaceAttributes");
-        symbolBase.setType("interface");
+        symbolBase.setValue("InterfaceAttributes:");
+        symbolBase.setType(ctx.Interface().getText());
         globalScope.symbols.put(ctx.Interface().getText(),symbolBase);
         InterfaceStatement interfaceStatement = new InterfaceStatement();
         if (ctx.Interface() != null) {
@@ -208,7 +207,7 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         SymbolBase symbolBase = new SymbolBase();
         symbolBase.setName(ctx.Selector().getText());
         symbolBase.setValue(ctx.stringLiteral().getText());
-        symbolBase.setType("stringLiteral");
+        symbolBase.setType("ReservedWord:");
         scope.symbols.put(symbolBase.getName(), symbolBase);
         optionselector.setStringLiteral((StringLiteral) visit(ctx.stringLiteral()));
         if (ctx.Selector()!=null){
@@ -260,7 +259,7 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         SymbolBase symbolBase = new SymbolBase();
         symbolBase.setName(ctx.urlStatement().getText());
         symbolBase.setValue(ctx.stringLiteral().getText());
-        symbolBase.setType("stringLiteral");
+        symbolBase.setType("ReservedWord:");
         scope.symbols.put(symbolBase.getName(), symbolBase);
         return optiontemplateUrl;
     }
@@ -273,13 +272,13 @@ public class BaseVisitor extends AngularParserBaseVisitor {
             urlStatement.setTemplateUrl(ctx.TemplateUrl().getText());
             symbolBase.setName(ctx.TemplateUrl().getText());
             symbolBase.setValue(ctx.TemplateUrl().getText());
-            symbolBase.setType("stringLiteral");
+            symbolBase.setType("ReservedWord:");
         }
         if (ctx.StyleUrl()!=null){
             urlStatement.setStyleUrl(ctx.StyleUrl().getText());
             symbolBase.setName(ctx.StyleUrl().getText());
             symbolBase.setValue(ctx.StyleUrl().getText());
-            symbolBase.setType("stringLiteral");
+            symbolBase.setType("ReservedWord:");
         }
         scope.symbols.put(symbolBase.getName(), symbolBase);
         return urlStatement;
@@ -296,7 +295,7 @@ public class BaseVisitor extends AngularParserBaseVisitor {
          optionStyleUrls.setStyleUrls(ctx.StyleUrls().getText());
             symbolBase.setName(ctx.StyleUrls().getText());
             symbolBase.setValue(ctx.StyleUrls().getText());
-            symbolBase.setType("stringLiteral");
+            symbolBase.setType("ReservedWord:");
         }
         scope.symbols.put(symbolBase.getName(), symbolBase);
         return optionStyleUrls;
