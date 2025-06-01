@@ -10,7 +10,7 @@ import java.util.Stack;
 public class FunctionDuplicate {
     private static final Map<String, Integer> functionNameToFirstLine = new HashMap<>();
     public static void isFunctionDuplicate(String functionName, ParserRuleContext ctx, Stack<GlobalScope> globalStack) {
-        if (globalStack.isEmpty()) return; // تجنب الخطأ
+        if (globalStack.isEmpty()) return;
 
         GlobalScope currentScope = globalStack.peek();
         int currentLine = ctx.getStart().getLine();

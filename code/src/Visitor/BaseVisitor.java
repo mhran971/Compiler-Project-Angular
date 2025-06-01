@@ -1,6 +1,7 @@
 package Visitor;
 import AST.*;
 import SemanticError.FunctionDuplicate;
+import SemanticError.StyleUrlExtensionCheck;
 import SymbolTable.Scope.BaseScope;
 import SymbolTable.Scope.GlobalScope;
 import SymbolTable.Scope.LocalScope;
@@ -292,10 +293,11 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         {
          optionStyleUrls.setStyleUrls(ctx.StyleUrls().getText());
             symbolBase.setName(ctx.StyleUrls().getText());
-            symbolBase.setValue(ctx.StyleUrls().getText());
+            symbolBase.setValue(ctx.stringLiteral().getText());
             symbolBase.setType("ReservedWord:");
         }
         scope.symbols.put(symbolBase.getName(), symbolBase);
+        StyleUrlExtensionCheck.check(symbolTable,ctx);
         return optionStyleUrls;
     }
     @Override
@@ -506,8 +508,12 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         this.symbolTable.addGlobalScope(globalScope);
         SymbolBase symbolBase = new SymbolBase();
         symbolBase.setName("div");
-        symbolBase.setValue(ctx.stringLiteral().getText());
-        symbolBase.setType(ctx.keyword().getText());
+        if(ctx.stringLiteral()!=null){
+            symbolBase.setValue(ctx.stringLiteral().getText());
+        }
+        if(ctx.keyword()!=null){
+            symbolBase.setType(ctx.keyword().getText());
+        }
         globalScope.symbols.put(symbolBase.getName(),symbolBase);
         htmlTagNameStart.setTagName((TagName) visit(ctx.tagName()));
         if(ctx.keyword()!=null){

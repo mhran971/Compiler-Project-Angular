@@ -12,7 +12,7 @@ Scope: Component Scope:
   Symbol → Name:Component    , Type: Component      , Value: ComponentOptions:          
   Symbol → Name:imports      , Type: ReservedWord:  , Value: [RouterOutlet,CommonModule]
   Symbol → Name:templateUrl  , Type: ReservedWord:  , Value: './app.component.html'     
-  Symbol → Name:styleUrls    , Type: ReservedWord:  , Value: styleUrls                  
+  Symbol → Name:styleUrls    , Type: ReservedWord:  , Value: './app.component'          
 Scope: Export Scope:
   Symbol → Name:AppComponent  , Type: class    , Value: ClassBody:
   Symbol → Name:products      , Type: Product  , Value: Products: 

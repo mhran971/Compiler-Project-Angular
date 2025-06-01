@@ -9,7 +9,7 @@ public abstract class BaseScope implements Scope {
     protected String type;
     protected Scope enclosingScope;// Parent Scope
 
-    public Map<String, Symbol> symbols = new LinkedHashMap<>();// Symbol in this scope only Name:Value
+    public Map<String, Symbol> symbols = new LinkedHashMap<>();// Symbol in this scope
     //all nested scopes, does not include scoped symbols Ex:while,blocks,if
     protected List<Scope> nestedScopesNotSymbols = new ArrayList<>();
 

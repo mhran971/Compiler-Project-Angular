@@ -1,14 +1,9 @@
 package SymbolTable;
-
-import SymbolTable.Scope.BaseScope;
 import SymbolTable.Scope.GlobalScope;
 import SymbolTable.Scope.LocalScope;
 import SymbolTable.Scope.Scope;
 import SymbolTable.Symbol.Symbol;
 import SymbolTable.Symbol.SymbolBase;
-
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.util.*;
 
@@ -21,7 +16,7 @@ public class SymbolTable {
 
 
     public Scope getScopeByName(String name) {
-        for (Scope scope : globalScopes) { // أو حسب بنية symbol table الخاصة بك
+        for (Scope scope : globalScopes) {
             if (scope.getName().equals(name)) {
                 return scope;
             }
@@ -55,7 +50,7 @@ public class SymbolTable {
         return globalScopes;
     }
 
-    public void setGlobalScopes(List<GlobalScope> globalScopes) {
+   public void setGlobalScopes(List<GlobalScope> globalScopes) {
         this.globalScopes = globalScopes;
     }
 
@@ -71,7 +66,7 @@ public class SymbolTable {
         this.globalScopes.add(scope);
     }
 
-    public void addLocalScope(LocalScope scope) {
+   public void addLocalScope(LocalScope scope) {
         this.localScopes.add(scope);
     }
     public void removeGlobalScope(GlobalScope scope) {
@@ -106,7 +101,6 @@ public class SymbolTable {
         if (scope.getName() != null && !scope.getName().trim().isEmpty()) {
             out.println(indent + "Scope: " + scope.getName());
         }
-
         int maxNameLen = "Name".length();
         int maxTypeLen = "Type".length();
         int maxValueLen = "Value".length();
@@ -149,17 +143,5 @@ public class SymbolTable {
         return sb.toString();
     }
 
-
-/*    public void write(String text) {
-        try {
-            FileWriter syntaxError = new FileWriter("Result\\Syntax.txt");
-            syntaxError.append("Syntax Error : \n");
-            syntaxError.write(text);
-            syntaxError.flush();
-            syntaxError.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }*/
 
 }

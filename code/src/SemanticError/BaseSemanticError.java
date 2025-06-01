@@ -1,3 +1,4 @@
+/*
 
 package SemanticError;
 import SymbolTable.Symbol.SymbolBase;
@@ -8,12 +9,14 @@ import java.util.List;
 public class BaseSemanticError {
    SymbolTable symbolTable;
 
-  /* public SymbolTable getSymbolTable() {
+  */
+/* public SymbolTable getSymbolTable() {
        return symbolTable;
     }
     public void setSymbolTable(SymbolTable symbolTable) {
         this.symbolTable = symbolTable;
-    }*/
+    }*//*
+
     boolean checkDuplication() {
         List<SymbolBase> symbols = symbolTable.getSymbolBases();
         for (int i = 0; i < symbols.size(); i++) {
@@ -27,7 +30,8 @@ public class BaseSemanticError {
         }
         return true;
     }
-    /*boolean checkDuplication() {
+    */
+/*boolean checkDuplication() {
     Set<String> names = new HashSet<>();
     for (SymbolBase symbol : symbolTable.getSymbolBases()) {
         if (!names.add(symbol.getName())) {
@@ -36,7 +40,8 @@ public class BaseSemanticError {
     }
     return true;
 }
-*/
+*//*
+
 
 
    public void check(){
