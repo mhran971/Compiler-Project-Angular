@@ -1,8 +1,5 @@
 
 package AST;
-public  interface Statement {
-
-}
-
+public  interface Statement { }
     // importStatement| interfaceStatement| componentStatement
     // | exportStatement | htmlElements | cssElement

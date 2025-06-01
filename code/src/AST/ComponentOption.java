@@ -1,4 +1,4 @@
 package AST;
 public interface ComponentOption {}
-  // optionselector| optionimports| optiontemplateUrl | optionstyleUrls  | Standalone Colon identifier Comma
+  // optionSelector| optionImports| optionTemplateUrl | optionStyleUrls  | Standalone Colon identifier Comma
 

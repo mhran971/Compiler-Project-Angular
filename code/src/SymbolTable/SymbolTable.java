@@ -150,7 +150,7 @@ public class SymbolTable {
     }
 
 
-    public void write(String text) {
+/*    public void write(String text) {
         try {
             FileWriter syntaxError = new FileWriter("Result\\Syntax.txt");
             syntaxError.append("Syntax Error : \n");
@@ -160,6 +160,6 @@ public class SymbolTable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
 }

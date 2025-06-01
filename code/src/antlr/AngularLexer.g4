@@ -229,13 +229,9 @@ Identifier: IdentifierStart IdentifierPart*;
 EVENT_BINDING: '(' STRING ')' ;
 /// String Literals
 StringLiteral:
-   ('"' DoubleStringCharacter* '"' | '\'' SingleStringCharacter* '\'') //{this.ProcessStringLiteral();}
+   ('"' DoubleStringCharacter* '"' | '\'' SingleStringCharacter* '\'')
          ;
-//Messages:('"' STRING* '"' | '\'' STRING* '\'');
 
-//WhiteSpaces: [\t\u000B\u000C\u0020\u00A0]+  -> skip;
-
-//LineTerminator: [\r\n\u2028\u2029] -> skip;
 
 // Fragment rules
 fragment DoubleStringCharacter: ~["\\\r\n] | '\\' EscapeSequence | LineContinuation;

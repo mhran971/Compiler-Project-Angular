@@ -74,20 +74,6 @@ public class Type implements PropertyDeclaration,DeclarationString {
         Number = number;
     }
 
- /*   @Override
-    public String toString() {
-        return "Type{" +
-                "string='" + string + '\'' +
-                ", Int='" + Int + '\'' +
-                ", Float='" + Float + '\'' +
-                ", Double='" + Double + '\'' +
-                ", Bool='" + Bool + '\'' +
-                ", Var='" + Var + '\'' +
-                ", Array='" + Array + '\'' +
-                ", Number='" + Number + '\'' +
-                '}';
-    }*/
-
     @Override
     public String toString() {
         if(string!=null){

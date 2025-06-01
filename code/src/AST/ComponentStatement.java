@@ -3,7 +3,6 @@ package AST;
 public class ComponentStatement implements Statement{
     //At Component LeftParen componentOptions RightParen
 
-
     String Component;
     ComponentOptions componentOptions;
 

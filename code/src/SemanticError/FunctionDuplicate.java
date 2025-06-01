@@ -9,7 +9,6 @@ import java.util.Stack;
 
 public class FunctionDuplicate {
     private static final Map<String, Integer> functionNameToFirstLine = new HashMap<>();
-
     public static void isFunctionDuplicate(String functionName, ParserRuleContext ctx, Stack<GlobalScope> globalStack) {
         if (globalStack.isEmpty()) return; // تجنب الخطأ
 

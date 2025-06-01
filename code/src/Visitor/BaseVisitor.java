@@ -15,7 +15,6 @@ import static SemanticError.CheckStringAssignment.checkStringAssignment;
 
 public class BaseVisitor extends AngularParserBaseVisitor {
     SymbolTable symbolTable;
-    SymbolBase symbolBase;
     private final Stack<GlobalScope> globalStack;
     private final Stack<LocalScope> localStack;
     public SymbolTable getSymbolTable() {
@@ -23,7 +22,6 @@ public class BaseVisitor extends AngularParserBaseVisitor {
     }
     public BaseVisitor() {
         this.symbolTable = new SymbolTable();
-        this.symbolBase = new SymbolBase();
         this.globalStack = new Stack<>();
         this.localStack = new Stack<>();
     }
@@ -154,10 +152,10 @@ public class BaseVisitor extends AngularParserBaseVisitor {
        return new AttributesProperty(declarationName, type);
    }
     @Override
-    public AttributesProperty visitMethodProperty(AngularParser.MethodPropertyContext ctx) {
+    public MethodProperty visitMethodProperty(AngularParser.MethodPropertyContext ctx) {
         Type type=(Type) visit(ctx.type());
         DeclarationName declarationName=(DeclarationName) visit(ctx.declarationName());
-        return new AttributesProperty(declarationName,type);
+        return new MethodProperty(declarationName,type);
     }
    @Override
    public ComponentStatement visitComponentStatement(AngularParser.ComponentStatementContext ctx) {

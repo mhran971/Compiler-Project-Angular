@@ -27,14 +27,8 @@ public class ParameterList {
     @Override
     public String toString() {
         return '\n'+"parameter=" + parameter+
-                '\n'+"parameterComma------------=" + parameterComma
+                '\n'+"parameterComma=" + parameterComma
                 ;
-       /* if(parameterComma!=null){
-            return '\n'+"parameter=" + parameter+
-                    '\n'+"parameterComma------------=" + parameterComma
-                    ;
-        }
-        return '\n'+"parameter=" + parameter + '\n'
-                ;*/
+
     }
 }

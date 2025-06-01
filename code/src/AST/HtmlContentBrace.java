@@ -38,7 +38,6 @@ public class HtmlContentBrace implements HtmlElementContent{
     @Override
     public String toString() {
         return  '\n'+"htmlContentBrace=" +
-                //'\n'+"tagName=" + tagName +
                 '\n'+"contentHtml=" + contentHtml +
                 '\n'+"htmlBrace=" + htmlBrace
                 ;

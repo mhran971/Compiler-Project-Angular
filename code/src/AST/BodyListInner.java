@@ -31,7 +31,6 @@ public class BodyListInner {
                     ;
         }
         return '\n'+"" + declarationName
-                //'\n'+"stringLiteral=" + stringLiteral +'\n'
                 ;
     }
 }

@@ -40,7 +40,6 @@ public class Main {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        System.out.println("Number of Scope: " + symbolTable.getGlobalScopes().size());
         SemanticCheck semanticCheck = new SemanticCheck();
         semanticCheck.checkErrors();
 

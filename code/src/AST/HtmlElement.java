@@ -38,11 +38,9 @@ public class HtmlElement {
         if(htmlElementContent!=null){
             return '\n'+"htmlTagNameStart=" + htmlTagNameStart +
                     '\n'+"htmlElementContent=" + htmlElementContent+'\n'
-                    //'\n'+"htmlTagNameEnd=" + htmlTagNameEnd +'\n'
                     ;
         }
         return '\n'+"htmlTagNameStart=" + htmlTagNameStart+'\n'
-                //'\n'+"htmlTagNameEnd=" + htmlTagNameEnd +'\n'
                 ;
     }
 }

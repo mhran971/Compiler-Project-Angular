@@ -7,8 +7,6 @@ public class BodyList {
     //LeftBrace bodyListInner* RightBrace Comma
     List<BodyListInner> bodyListInner=new ArrayList<BodyListInner>();
 
-
-
     public List<BodyListInner> getBodyListInner() {
         return bodyListInner;
     }

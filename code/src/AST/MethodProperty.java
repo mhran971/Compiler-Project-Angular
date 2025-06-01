@@ -1,3 +1,4 @@
+
 package AST;
 public class MethodProperty implements PropertyDeclaration{
     // declarationName LeftParen RightParen Colon type eos
@@ -27,9 +28,8 @@ public class MethodProperty implements PropertyDeclaration{
 
     @Override
     public String toString() {
-        return "MethodProperty{" +
-                "declarationName=" + declarationName +
-                ", type=" + type +
-                '}';
+        return "MethodProperty=" +
+                '\n'+ declarationName +
+                '\n'+ type ;
     }
 }
