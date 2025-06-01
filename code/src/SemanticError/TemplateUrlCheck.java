@@ -7,17 +7,18 @@ import SymbolTable.SymbolTable;
 import app.SemanticCheck;
 import org.antlr.v4.runtime.ParserRuleContext;
 
-public class StyleUrlExtensionCheck {
-    public static void check(SymbolTable symbolTable, ParserRuleContext ctx) {
+
+public class TemplateUrlCheck {
+    public static void checkTemplateUrl(SymbolTable symbolTable, ParserRuleContext ctx) {
         int currentLine = ctx.getStart().getLine();
         for (GlobalScope globalScope : symbolTable.getGlobalScopes()) {
             for (Symbol symbol : globalScope.getSymbols()) {
-                if ("styleUrls".equals(symbol.getName()) && "ReservedWord:".equals(symbol.getType())) {
+                if ("templateUrl".equals(symbol.getName()) && "ReservedWord:".equals(symbol.getType())) {
                     if (symbol instanceof SymbolBase) {
                         SymbolBase sb = (SymbolBase) symbol;
                         String value = sb.getValue().replaceAll("[\\[\\]'\" ]", "");
-                        if (!(value.endsWith(".css"))) {
-                            String errorMsg = "❌styleUrls value must end with a valid stylesheet extension like .css in line "+currentLine;
+                        if (!(value.endsWith(".html"))) {
+                            String errorMsg = "❌Invalid templateUrl: expected a file ending with .html in line "+currentLine;
                             if (!SemanticCheck.Errors.contains(errorMsg)) {
                                 SemanticCheck.Errors.add(errorMsg);
                             }
@@ -28,4 +29,5 @@ public class StyleUrlExtensionCheck {
             }
         }
     }
+
 }

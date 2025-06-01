@@ -1,6 +1,7 @@
 Semantic Check : 
-❌Variable <image> is already declared at line 15
-❌ styleUrls value must end with a valid stylesheet extension like .css 25
+❌ Variable <image> is already declared at line 15
+❌Invalid templateUrl: expected a file ending with .html in line 24
+❌styleUrls value must end with a valid stylesheet extension like .css in line 25
 ❌Component is missing selector at line 22
 ❌Type error: cannot assign non-string value to string variable 'name' at line 32
 ❌Type error: cannot assign non-string value to string variable 'id' at line 55

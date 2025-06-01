@@ -1,5 +1,6 @@
 package Visitor;
 import AST.*;
+import SemanticError.DuplicateVariableChecker;
 import SemanticError.FunctionDuplicate;
 import SemanticError.StyleUrlExtensionCheck;
 import SymbolTable.Scope.BaseScope;
@@ -13,6 +14,7 @@ import app.SemanticCheck;
 import java.util.*;
 import static SemanticError.BindingChecker.checkBinding;
 import static SemanticError.CheckStringAssignment.checkStringAssignment;
+import static SemanticError.TemplateUrlCheck.checkTemplateUrl;
 
 public class BaseVisitor extends AngularParserBaseVisitor {
     SymbolTable symbolTable;
@@ -132,26 +134,23 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         }
         return interfaceAttributes;
     }
-   @Override
-   public AttributesProperty visitAttributesProperty(AngularParser.AttributesPropertyContext ctx) {
-       Type type = (Type) visit(ctx.type());
-       DeclarationName declarationName = (DeclarationName) visit(ctx.declarationName());
-       BaseScope scope = !localStack.isEmpty() ? localStack.peek() : globalStack.peek();
-       SymbolBase symbolBase = new SymbolBase();
-       symbolBase.setName(declarationName.getSTRING());
-       symbolBase.setType(ctx.type().getText());
-       try {
-           scope.define(symbolBase);
-       } catch (IllegalArgumentException e) {
-           int line = ctx.getStart().getLine();
-           String errorMsg = "❌Variable <"+symbolBase.getName()+"> is already declared at line " + line;
-           if (!SemanticCheck.Errors.contains(errorMsg)) {
-               SemanticCheck.Errors.add(errorMsg);
-           }
-       }
-       scope.symbols.put(symbolBase.getName(), symbolBase);
-       return new AttributesProperty(declarationName, type);
-   }
+    @Override
+    public AttributesProperty visitAttributesProperty(AngularParser.AttributesPropertyContext ctx) {
+        Type type = (Type) visit(ctx.type());
+        DeclarationName declarationName = (DeclarationName) visit(ctx.declarationName());
+        BaseScope scope = !localStack.isEmpty() ? localStack.peek() : globalStack.peek();
+
+        SymbolBase symbolBase = new SymbolBase();
+        symbolBase.setName(declarationName.getSTRING());
+        symbolBase.setType(ctx.type().getText());
+
+        DuplicateVariableChecker.check(symbolBase, scope, ctx);
+
+        scope.symbols.put(symbolBase.getName(), symbolBase);
+
+        return new AttributesProperty(declarationName, type);
+    }
+
     @Override
     public MethodProperty visitMethodProperty(AngularParser.MethodPropertyContext ctx) {
         Type type=(Type) visit(ctx.type());
@@ -260,6 +259,7 @@ public class BaseVisitor extends AngularParserBaseVisitor {
         symbolBase.setValue(ctx.stringLiteral().getText());
         symbolBase.setType("ReservedWord:");
         scope.symbols.put(symbolBase.getName(), symbolBase);
+        checkTemplateUrl(symbolTable,ctx);
         return optiontemplateUrl;
     }
     @Override

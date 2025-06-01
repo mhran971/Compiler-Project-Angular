@@ -21,7 +21,7 @@ interface Item {
 
 @Component({
   imports: [RouterOutlet, CommonModule],
-  templateUrl: './app.component.html',
+  templateUrl: './app.component',
   styleUrls: ['./app.component']
 })
 
